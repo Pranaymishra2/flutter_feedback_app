@@ -1,13 +1,13 @@
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("dev.flutter.flutter-gradle-plugin")
+    id("org.jetbrains.kotlin.android")
+    id("dev.flutter.flutter-gradle-plugin") // This should match what's in your settings.gradle.kts
 }
 
 android {
     namespace = "com.example.flutter_feedback_app"
     compileSdk = 34
-    ndkVersion = "27.0.12077973"
+    ndkVersion = "27.0.12077973" // Match your installed NDK version
 
     defaultConfig {
         applicationId = "com.example.flutter_feedback_app"
@@ -29,7 +29,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("debug") // Only for testing; create a real signingConfig later
         }
     }
 }

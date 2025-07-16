@@ -19,3 +19,11 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+android {
+    compileSdk = 34
+    ndkVersion = "27.0.12077973"
+
+    defaultConfig {
+        // your existing config
+    }
+}

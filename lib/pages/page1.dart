@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_feedback_app/bloc/navigation_bloc.dart';
-import '../bloc/navigation_event.dart';
+import 'package:flutter_feedback_app/bloc/navigation_event.dart';
+import 'package:vibration/vibration.dart';
+import '../bloc/navigation_bloc.dart';
 
 class Page1 extends StatelessWidget {
-  Page1({super.key});
-
-  final TextEditingController _usernameController = TextEditingController();
+  const Page1({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _usernameController = TextEditingController();
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Feedback Portal"),
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -18,47 +23,64 @@ class Page1 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 40),
-              Center(
-                child: Text(
-                  'Remote Ward Feedbacks',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.teal[900],
-                    letterSpacing: 1.2,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(0, 2),
-                        blurRadius: 4,
-                        color: Colors.black26,
-                      )
-                    ],
-                  ),
-                ),
+
+              /// 🏷️ Title
+              Text(
+                'Remote Ward Feedbacks',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                      letterSpacing: 1.2,
+                    ),
               ),
-              const SizedBox(height: 24),
+
+              const SizedBox(height: 40),
+
+              /// 👤 Username Input
               TextField(
                 controller: _usernameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Enter your username',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   filled: true,
-                  fillColor: Colors.white70,
-                  border: OutlineInputBorder(),
+                  fillColor: Colors.teal.shade50,
                 ),
               ),
+
               const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: () {
-                  if (_usernameController.text.isNotEmpty) {
-                    context
-                        .read<NavigationBloc>()
-                        .add(GoToPage2(_usernameController.text));
+
+              /// 🚀 Enter Button
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final username = _usernameController.text.trim();
+
+                  if (username.isNotEmpty) {
+                    context.read<NavigationBloc>().add(GoToPage2(username));
+                  } else {
+                    if (await Vibration.hasVibrator() ?? false) {
+                      Vibration.vibrate(duration: 300); // 🔔 Vibrate
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Please enter a username")),
+                    );
                   }
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                icon: const Icon(Icons.login),
+                label: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 14),
                   child: Text('Enter'),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
                 ),
               ),
             ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_feedback_app/bloc/navigation_event.dart';
-import 'package:vibration/vibration.dart';
+import 'package:flutter/services.dart';
 import '../bloc/navigation_bloc.dart';
 
 class Page1 extends StatelessWidget {
@@ -9,7 +9,7 @@ class Page1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _usernameController = TextEditingController();
+    final TextEditingController usernameController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -39,7 +39,7 @@ class Page1 extends StatelessWidget {
 
               /// 👤 Username Input
               TextField(
-                controller: _usernameController,
+                controller: usernameController,
                 decoration: InputDecoration(
                   labelText: 'Enter your username',
                   border: OutlineInputBorder(
@@ -55,15 +55,12 @@ class Page1 extends StatelessWidget {
               /// 🚀 Enter Button
               ElevatedButton.icon(
                 onPressed: () async {
-                  final username = _usernameController.text.trim();
+                  final username = usernameController.text.trim();
 
                   if (username.isNotEmpty) {
                     context.read<NavigationBloc>().add(GoToPage2(username));
                   } else {
-                    if (await Vibration.hasVibrator() ?? false) {
-                      Vibration.vibrate(duration: 300); // 🔔 Vibrate
-                    }
-
+                    HapticFeedback.mediumImpact();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Please enter a username")),
                     );
